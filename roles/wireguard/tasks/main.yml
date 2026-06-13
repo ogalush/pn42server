@@ -1,0 +1,54 @@
+# https://github.com/ogalush/Documents/blob/master/InstallWireGuard.md
+- name: "Install WireGuard packages"
+  apt:
+    name:
+      - wireguard
+      - iptables
+    update_cache: yes
+
+- name: Enable IP forwarding (IPv4/IPv6)
+  sysctl:
+    name: "{{ item.name }}"
+    value: "{{ item.value }}"
+    state: present
+    reload: yes
+  loop:
+    - { name: net.ipv4.ip_forward, value: "1" }
+    - { name: net.ipv6.conf.all.forwarding, value: "1" }
+
+- name: "Create /etc/wireguard"
+  file:
+    path: "/etc/wireguard"
+    state: directory
+    mode: "0700"
+
+- name: "Save server private key"
+  copy:
+    content: "{{ vault_wireguard_server_private_key }}"
+    dest: "/etc/wireguard/server_private.key"
+    mode: "0600"
+
+- name: "Save server public key"
+  copy:
+    content: "{{ vault_wireguard_server_public_key }}"
+    dest: "/etc/wireguard/server_public.key"
+    mode: "0600"
+
+- name: "Create server wg0 config"
+  template:
+    src: "wg0.conf.j2"
+    dest: "/etc/wireguard/wg0.conf"
+    mode: "0600"
+
+- name: "Enable WireGuard service"
+  systemd:
+    name: "wg-quick@wg0"
+    enabled: yes
+    state: restarted
+  when: not ansible_check_mode
+
+- name: "Allow UDP port"
+  ufw:
+    rule: allow
+    port: "{{ wireguard_port }}"
+    proto: udp

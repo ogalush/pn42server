@@ -1,0 +1,9 @@
+---
+- name: "Setup PN42 environment on Ubuntu 26.04"
+  hosts: pn42
+  become: yes
+  roles:
+    - common
+    - ddns
+    - docker
+    - wireguard

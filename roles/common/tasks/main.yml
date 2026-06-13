@@ -1,0 +1,13 @@
+---
+- name: "Update all packages via apt"
+  become: yes
+  apt:
+    upgrade: yes
+    update_cache: yes
+
+- name: "Install basic utilities"
+  become: yes
+  apt:
+    name:
+      - ansible
+      - curl

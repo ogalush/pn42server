@@ -1,0 +1,13 @@
+[Interface]
+PrivateKey = {{ vault_wireguard_server_private_key }}
+Address = {{ wireguard_server_ip }}/{{ wireguard_network_mask }}, {{ wireguard_server_ip6 }}/{{ wireguard_network6_mask }}
+ListenPort = {{ wireguard_port }}
+
+PostUp = iptables -A FORWARD -i %i -s {{ wireguard_network }}/{{ wireguard_network_mask }} -j ACCEPT; iptables -t nat -A POSTROUTING -s {{ wireguard_network }}/{{ wireguard_network_mask }} -o {{ wireguard_external_interface }} -j MASQUERADE; iptables -A FORWARD -i {{ wireguard_external_interface }} -o {{ wireguard_interface }} -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT; ip6tables -A FORWARD -i %i -s {{ wireguard_network6 }}/{{ wireguard_network6_mask }} -j ACCEPT; ip6tables -t nat -A POSTROUTING -s {{ wireguard_network6 }}/{{ wireguard_network6_mask }} -o {{ wireguard_external_interface }} -j MASQUERADE; ip6tables -A FORWARD -i {{ wireguard_external_interface }} -o {{ wireguard_interface }} -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
+PostDown = iptables -D FORWARD -i %i -s {{ wireguard_network }}/{{ wireguard_network_mask }} -j ACCEPT; iptables -t nat -D POSTROUTING -s {{ wireguard_network }}/{{ wireguard_network_mask }} -o {{ wireguard_external_interface }} -j MASQUERADE; iptables -D FORWARD -i {{ wireguard_external_interface }} -o {{ wireguard_interface }} -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT; ip6tables -D FORWARD -i %i -s {{ wireguard_network6 }}/{{ wireguard_network6_mask }} -j ACCEPT; ip6tables -t nat -D POSTROUTING -s {{ wireguard_network6 }}/{{ wireguard_network6_mask }} -o {{ wireguard_external_interface }} -j MASQUERADE; ip6tables -D FORWARD -i {{ wireguard_external_interface }} -o {{ wireguard_interface }} -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT
+
+{% for c in vault_wireguard_clients %}
+[Peer]
+PublicKey = {{ c.public_key }}
+AllowedIPs = {{ c.ip }}/32, {{ c.ip6 }}/128
+{% endfor %}
