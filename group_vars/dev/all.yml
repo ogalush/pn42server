@@ -1,0 +1,10 @@
+# WireGuard設定
+wireguard_interface: "wg0"
+wireguard_port: 51820
+wireguard_network: "10.8.0.0"
+wireguard_network_mask: "24"
+wireguard_server_ip: "10.8.0.254"
+wireguard_network6: "fd00:10:8::"
+wireguard_network6_mask: "64"
+wireguard_server_ip6: "fd00:10:8::ffff"
+wireguard_external_interface: "enp1s0"
