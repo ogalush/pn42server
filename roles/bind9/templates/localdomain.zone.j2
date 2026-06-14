@@ -1,0 +1,13 @@
+$TTL 600
+@ IN SOA pn42.localdomain. root.localdomain. (
+    {{ ansible_facts.date_time.epoch }} ; Serial
+    3600                                ; Refresh
+    900                                 ; Retry
+    3600                                ; Expire
+    3600 )                              ; Minimum
+
+@ IN NS pn42.localdomain.
+
+ryunosuke.localdomain.  IN A 192.168.3.200
+livaserver.localdomain. IN A 192.168.3.220
+pn42.localdomain.       IN A 192.168.3.221

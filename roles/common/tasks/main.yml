@@ -4,6 +4,7 @@
   apt:
     upgrade: yes
     update_cache: yes
+    autoremove: yes
 
 - name: "Install basic utilities"
   become: yes

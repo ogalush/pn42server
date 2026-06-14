@@ -1,0 +1,72 @@
+- name: "Install Bind9 packages"
+  become: yes
+  apt:
+    name:
+      - bind9
+      - bind9-dnsutils
+      - bind9-utils
+    state: present
+    update_cache: yes
+
+- name: "Deploy rndc.key from vault"
+  copy:
+    dest: "/etc/bind/rndc.key"
+    content: "{{ vault_bind9_rndc_key }}"
+    owner: root
+    group: bind
+    mode: "0640"
+  notify: "Restart bind9"
+
+- name: "Deploy named.conf"
+  copy:
+    src: named.conf
+    dest: "/etc/bind/named.conf"
+    owner: root
+    group: bind
+    mode: "0644"
+  notify: "Restart bind9"
+
+- name: "Deploy named.conf.options"
+  template:
+    src: "named.conf.options.j2"
+    dest: "/etc/bind/named.conf.options"
+  notify: "Restart bind9"
+
+- name: "Deploy named.conf.local"
+  copy:
+    src: "named.conf.local"
+    dest: "/etc/bind/named.conf.local"
+    owner: root
+    group: bind
+    mode: "0644"
+  notify: "Restart bind9"
+
+- name: "Deploy DNS zone localdomain"
+  template:
+    src: localdomain.zone.j2
+    dest: /etc/bind/localdomain.zone
+    owner: root
+    group: bind
+    mode: "0644"
+  notify: "Restart bind9"
+
+- name: "Validate named.conf syntax"
+  command: named-checkconf
+  changed_when: false
+
+- name: "Start bind9"
+  service:
+    name: bind9
+    state: started
+    enabled: yes
+
+- meta: flush_handlers
+
+- name: "Test rndc"
+  command: "rndc status"
+  register: rndc_status
+  changed_when: false
+
+- name: "Show rndc status"
+  debug:
+    var: rndc_status.stdout

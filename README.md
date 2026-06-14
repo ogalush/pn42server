@@ -7,7 +7,6 @@
 今まで使っていた機能を引き継ぐ.
 * MyDNS
 * WireGuard
-* OpenVPN (検証で使っていたので引き続き)
 * docker compose
 * bind9
 
