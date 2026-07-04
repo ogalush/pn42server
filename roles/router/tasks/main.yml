@@ -34,6 +34,9 @@
     src: "nftables.conf.j2"
     dest: "/etc/nftables.conf"
   notify: "Restart nftables"
+
+- name: "Apply nftables"
+  command: "/usr/sbin/nft -f /etc/nftables.conf"
 - meta: flush_handlers
 
 
