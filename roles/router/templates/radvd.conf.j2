@@ -1,0 +1,8 @@
+interface {{ linuxrouter_lan_interface }} {
+    AdvSendAdvert on;
+
+    prefix {{ linuxrouter_wan_ipv6_prefix }}/{{ linuxrouter_wan_ipv6_netmask }} {
+        AdvOnLink on;
+        AdvAutonomous on;
+    };
+};

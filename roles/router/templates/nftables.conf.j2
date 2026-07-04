@@ -1,0 +1,38 @@
+#!/usr/sbin/nft -f
+
+flush ruleset
+
+table ip nat {
+    chain postrouting {
+        type nat hook postrouting priority srcnat;
+        oifname "{{ linuxrouter_wan_interface }}" masquerade
+    }
+}
+
+table inet filter {
+    chain input {
+        type filter hook input priority filter;
+        policy accept;
+        ct state established,related accept
+        iifname "lo" accept
+{% for rule in linuxrouter_nat_portforward %}
+        ip6 daddr {{ rule.address }} {{ rule.protocol }} dport {{ rule.port }} accept
+{% endfor %}
+    }
+
+    chain forward {
+        type filter hook forward priority filter;
+        policy drop;
+
+        ct state established,related accept
+{% for rule in linuxrouter_nat_portforward %}
+        iifname "{{ linuxrouter_wan_interface }}" oifname "{{ linuxrouter_lan_interface }}" {{ rule.protocol }} dport {{ rule.port }} accept
+{% endfor %}
+        iifname "{{ linuxrouter_lan_interface }}" oifname "{{ linuxrouter_wan_interface }}" accept
+    }
+
+    chain output {
+        type filter hook output priority filter;
+        policy accept;
+    }
+}

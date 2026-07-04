@@ -1,0 +1,40 @@
+- name: "Restart networking"
+  systemd:
+    name: systemd-networkd
+    state: restarted
+    enabled: yes
+
+- name: "Restart sysctl"
+  systemd:
+    name: systemd-sysctl
+    state: restarted
+
+- name: "Restart nftables"
+  systemd:
+    name: nftables
+    state: restarted
+    enabled: yes
+
+- name: "Restart ndppd"
+  systemd:
+    name: ndppd
+    state: restarted
+    enabled: yes
+
+- name: "Restart radvd"
+  systemd:
+    name: radvd
+    state: restarted
+    enabled: yes
+
+- name: "Restart unbound"
+  systemd:
+    name: unbound
+    state: restarted
+    enabled: yes
+
+- name: "Restart isc-dhcp-server"
+  systemd:
+    name: isc-dhcp-server
+    state: restarted
+    enabled: yes

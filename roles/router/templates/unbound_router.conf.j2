@@ -1,0 +1,21 @@
+server:
+    interface: 127.0.0.1
+    interface: {{ linuxrouter_lan_address }}
+
+    access-control: 127.0.0.0/8 allow
+    access-control: {{ linuxrouter_lan_subnet }}/{{ linuxrouter_lan_subnet_cidr }} allow
+
+    verbosity: 1
+
+    prefetch: yes
+    cache-min-ttl: 300
+    cache-max-ttl: 600
+
+    rrset-cache-size: 64m
+    msg-cache-size: 32m
+
+    hide-identity: yes
+    hide-version: yes
+
+remote-control:
+    control-enable: yes
