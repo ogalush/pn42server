@@ -29,3 +29,32 @@ ansible-playbookで設定する.
 % ansible-playbook -i dev.ini install_linuxrouter.yml -bK --ask-vault-pass --check --diff
 % ansible-playbook -i dev.ini install_linuxrouter.yml -bK --ask-vault-pass
 ```
+
+## 動作確認
+* LAN → Internet
+* IPv4 NAT
+* IPv6 routing  
+[あなたの IPv6 接続性をテストしましょう。](https://test-ipv6.com/index.html.ja_JP) でIPv6アドレスを拾えるか.
+* DNS (unbound)
+* WireGuard
+* WAN IPv6 ping  
+外からpingが返ってくること.
+```
+% ping6 -c 3 240b:10::...
+→ 
+```
+IPv6ではICMPを頻繁に利用するため開けている.
+* WAN TCP scan (all filtered)  
+外からtcpのポートスキャンをして意図しないポートを開けてないこと.
+```
+% nmap -Pn -6 240b:10::...
+Starting Nmap 7.99 ( https://nmap.org ) at 2026-07-05 04:31 +0900
+Nmap scan report for 240b:10::...
+Host is up.
+All 1000 scanned ports on 240b:10::... are in ignored states.
+Not shown: 1000 filtered tcp ports (no-response)
+
+Nmap done: 1 IP address (1 host up) scanned in 403.66 seconds
+```
+  
+以上

@@ -12,12 +12,15 @@ table ip nat {
 table inet filter {
     chain input {
         type filter hook input priority filter;
-        policy accept;
+        policy drop;
         ct state established,related accept
         iifname "lo" accept
+        iifname "{{ linuxrouter_lan_interface }}" accept
 {% for rule in linuxrouter_nat_portforward %}
         ip6 daddr {{ rule.address }} {{ rule.protocol }} dport {{ rule.port }} accept
 {% endfor %}
+        # ICMPv6
+        meta l4proto ipv6-icmp accept
     }
 
     chain forward {
