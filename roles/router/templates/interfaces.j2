@@ -1,0 +1,19 @@
+source /etc/network/interfaces.d/*
+
+# The loopback network interface
+auto lo
+iface lo inet loopback
+
+## WAN
+auto {{ linuxrouter_wan_interface }}
+iface {{ linuxrouter_wan_interface }} inet dhcp
+iface {{ linuxrouter_wan_interface }} inet6 auto
+  post-up ip -6 route replace {{ linuxrouter_wan_ipv6_prefix }}/{{ linuxrouter_wan_ipv6_netmask }} dev {{ linuxrouter_lan_interface }} metric 10
+
+## LAN
+auto {{ linuxrouter_lan_interface }}
+iface {{ linuxrouter_lan_interface }} inet static
+   address {{ linuxrouter_lan_address }}
+   netmask {{ linuxrouter_lan_netmask }}
+   dns-nameservers {{ linuxrouter_lan_dns_nameservers | join(' ') }}
+iface {{ linuxrouter_lan_interface }} inet6 auto

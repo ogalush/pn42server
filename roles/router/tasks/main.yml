@@ -1,0 +1,109 @@
+- name: "Deploy wan interfaces"
+  template:
+    src: "10-enp3s0.network.j2"
+    dest: "/etc/systemd/network/10-enp3s0.network"
+  notify: "Restart networking"
+
+- name: "Deploy lan interfaces"
+  template:
+    src: "20-enx50c4dd1d1f9b.network.j2"
+    dest: "/etc/systemd/network/20-enx50c4dd1d1f9b.network"
+  notify: "Restart networking"
+- meta: flush_handlers
+
+- name: "Deploy 99-router.conf"
+  copy:
+    src: "99-router.conf"
+    dest: "/etc/sysctl.d/99-router.conf"
+    owner: "root"
+    group: "root"
+    mode: "0644"
+  notify: "Restart sysctl"
+
+- name: "Deploy 99-ipv6-router.conf"
+  template:
+    src: "99-ipv6-router.conf.j2"
+    dest: "/etc/sysctl.d/99-ipv6-router.conf"
+  notify: "Restart sysctl"
+- meta: flush_handlers
+
+
+## IPv4 NAT
+- name: "Deploy nftables.conf"
+  template:
+    src: "nftables.conf.j2"
+    dest: "/etc/nftables.conf"
+  notify: "Restart nftables"
+- meta: flush_handlers
+
+
+## IPv6 透過設定
+- name: "Install IPv6 Packages"
+  apt:
+    name: "{{ item }}"
+    state: present
+    update_cache: yes
+  loop:
+    - ndppd
+    - radvd
+
+## IPv6 NDProxy
+- name: "Deploy ndppd.conf"
+  template:
+    src: "ndppd.conf.j2"
+    dest: "/etc/ndppd.conf"
+  notify: "Restart ndppd"
+- meta: flush_handlers
+
+- name: "Deploy radvd.conf"
+  template:
+    src: "radvd.conf.j2"
+    dest: "/etc/radvd.conf"
+  notify: "Restart radvd"
+- meta: flush_handlers
+
+
+## DNS Resolver
+- name: "Install DNS Resolver"
+  apt:
+    name: "{{ item }}"
+    state: present
+    update_cache: yes
+  loop:
+    - unbound
+
+- name: "Deploy router.conf"
+  template:
+    src: "unbound_router.conf.j2"
+    dest: "/etc/unbound/unbound.conf.d/router.conf"
+  notify: "Restart unbound"
+
+- name: "Check router.conf"
+  command: "unbound-checkconf"
+- meta: flush_handlers
+
+
+## DHCPv4 Server
+- name: "Install DHCPv4 Server"
+  apt:
+    name: "{{ item }}"
+    state: present
+    update_cache: yes
+  loop:
+    - isc-dhcp-server
+
+- name: "Deploy isc-dhcp-server"
+  template:
+    src: "isc-dhcp-server.j2"
+    dest: "/etc/default/isc-dhcp-server"
+  notify: "Restart isc-dhcp-server"
+
+- name: "Deploy dhcpd.conf"
+  template:
+    src: "dhcpd.conf.j2"
+    dest: "/etc/dhcp/dhcpd.conf"
+  notify: "Restart isc-dhcp-server"
+
+- name: "Check DHCPv4 configs"
+  command: "dhcpd -t"
+- meta: flush_handlers

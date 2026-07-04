@@ -1,0 +1,14 @@
+authoritative;
+
+default-lease-time 86400;
+max-lease-time 604800;
+
+option domain-name "{{ linuxrouter_lan_dhcp_searchdomain }}";
+
+subnet {{ linuxrouter_lan_subnet }} netmask {{ linuxrouter_lan_netmask }} {
+    range {{ linuxrouter_lan_dhcp_range }};
+    option routers {{ linuxrouter_lan_address }};
+    option subnet-mask {{ linuxrouter_lan_netmask }};
+    option broadcast-address {{ linuxrouter_lan_broadcast }};
+    option domain-name-servers {{ linuxrouter_lan_dhcp_nameservers | join(', ') }};
+}

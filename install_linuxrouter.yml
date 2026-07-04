@@ -1,0 +1,6 @@
+---
+- name: "Setup LinuxRouter to Liva with Debuan13"
+  hosts: router
+  become: yes
+  roles:
+    - router

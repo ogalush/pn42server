@@ -1,0 +1,20 @@
+[Match]
+Name={{ linuxrouter_lan_interface }}
+
+[Network]
+Address={{ linuxrouter_lan_address }}/{{ linuxrouter_lan_subnet_cidr }}
+{% for nameserver in linuxrouter_lan_dns_nameservers %}
+DNS={{ nameserver }}
+{% endfor %}
+
+
+# IPv6 Link Local を有効
+LinkLocalAddressing=ipv6
+
+# （必要なら）IPv6 RA をLAN側では受けない
+IPv6AcceptRA=no
+
+[Route]
+Destination={{ linuxrouter_wan_ipv6_prefix }}/{{ linuxrouter_wan_ipv6_netmask }}
+Scope=link
+Metric=10
