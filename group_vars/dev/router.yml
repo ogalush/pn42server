@@ -2,6 +2,7 @@
 linuxrouter_wan_interface: "enp3s0"
 linuxrouter_wan_ipv6_prefix: "240b:10:a460:6100::"
 linuxrouter_wan_ipv6_netmask: "64"
+linuxrouter_wan_mtu: "1460"
 linuxrouter_lan_interface: "enx50c4dd1d1f9b"
 linuxrouter_lan_address: "192.168.3.254"
 linuxrouter_lan_netmask: "255.255.255.0"
@@ -9,6 +10,7 @@ linuxrouter_lan_dns_nameservers: ["192.168.3.221","8.8.8.8"]
 linuxrouter_lan_subnet: "192.168.3.0"
 linuxrouter_lan_broadcast: "192.168.3.255"
 linuxrouter_lan_subnet_cidr: "24"
+linuxrouter_lan_mtu: "1500"
 
 ## NAT
 linuxrouter_nat_portforward:
