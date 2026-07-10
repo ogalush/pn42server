@@ -2,6 +2,15 @@
 
 flush ruleset
 
+# MAP-E (WAN MTU=1460 / LAN MTU=1500)
+# Rewrite TCP MSS on SYN packets to match the route MTU.
+table inet mangle {
+    chain forward {
+        type filter hook forward priority -150;
+        tcp flags syn tcp option maxseg size set rt mtu
+    }
+}
+
 table ip nat {
     chain postrouting {
         type nat hook postrouting priority srcnat;
