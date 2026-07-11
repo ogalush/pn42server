@@ -1,5 +1,5 @@
 proxy {{ linuxrouter_wan_interface }} {
-    router yes
+    router no
     timeout 500
 
     rule {{ linuxrouter_wan_ipv6_prefix }}/{{ linuxrouter_wan_ipv6_netmask }} {
