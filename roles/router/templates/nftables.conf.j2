@@ -28,8 +28,13 @@ table inet filter {
 {% for rule in linuxrouter_nat_portforward %}
         ip6 daddr {{ rule.address }} {{ rule.protocol }} dport {{ rule.port }} accept
 {% endfor %}
-        # ICMPv6
+        # ICMPv4 for PMTUD
+        ip protocol icmp accept
+        # ICMPv6 for PMTUD
         meta l4proto ipv6-icmp accept
+
+        ct state invalid log prefix "nft input invalid: " flags all counter
+        limit rate 10/second burst 20 packets log prefix "nft input drop: " flags all counter
     }
 
     chain forward {
@@ -37,10 +42,18 @@ table inet filter {
         policy drop;
 
         ct state established,related accept
+        # ICMPv4 for PMTUD
+        ip protocol icmp accept
+        # ICMPv6 for PMTUD
+        meta l4proto ipv6-icmp accept
+
 {% for rule in linuxrouter_nat_portforward %}
         iifname "{{ linuxrouter_wan_interface }}" oifname "{{ linuxrouter_lan_interface }}" {{ rule.protocol }} dport {{ rule.port }} accept
 {% endfor %}
         iifname "{{ linuxrouter_lan_interface }}" oifname "{{ linuxrouter_wan_interface }}" accept
+
+        ct state invalid log prefix "nft forward invalid: " flags all counter
+        limit rate 10/second burst 20 packets log prefix "nft forward drop: " flags all counter
     }
 
     chain output {
