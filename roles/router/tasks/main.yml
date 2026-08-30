@@ -11,6 +11,20 @@
   notify: "Restart networking"
 - meta: flush_handlers
 
+- name: Load nf_conntrack module at boot for net.netfilter.nf_conntrack_tcp_be_liberal
+  ansible.builtin.copy:
+    dest: /etc/modules-load.d/nf_conntrack.conf
+    content: |
+      nf_conntrack
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Load nf_conntrack module now
+  community.general.modprobe:
+    name: nf_conntrack
+    state: present
+
 - name: "Deploy 99-router.conf"
   copy:
     src: "99-router.conf"
