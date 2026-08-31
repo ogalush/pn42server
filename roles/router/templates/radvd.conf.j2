@@ -1,6 +1,6 @@
 interface {{ linuxrouter_lan_interface }} {
     AdvSendAdvert on;
-
+    AdvLinkMTU {{ linuxrouter_lan_mtu }};  # WAN側のMTUに合わせて1460を指定
     prefix {{ linuxrouter_wan_ipv6_prefix }}/{{ linuxrouter_wan_ipv6_netmask }} {
         AdvOnLink on;
         AdvAutonomous on;
