@@ -17,5 +17,11 @@ server:
     hide-identity: yes
     hide-version: yes
 
+    # 応答の高速化とネガティブキャッシュの最適化
+    fast-server-permil: 900
+
+    # ECH / HTTPS(Type 65) 関連の処理で遅延が出る場合の緩和
+    minimal-responses: yes
+
 remote-control:
     control-enable: yes
