@@ -10,6 +10,7 @@ server:
     prefetch: yes
     prefetch-key: yes
     serve-expired: yes
+    serve-expired-ttl: 600
 
     rrset-cache-size: 64m
     msg-cache-size: 32m
@@ -20,7 +21,18 @@ server:
     # 応答の高速化とネガティブキャッシュの最適化
     fast-server-permil: 900
 
-    # ECH / HTTPS(Type 65) 関連の処理で遅延が出る場合の緩和
+    # 不調な権威DNS（Type 65やEDNSに正しく答えない等）のブラックリスト保持時間を短縮
+    # デフォルトの回復待ち（900秒）を短縮し、速やかに再試行・復旧させる
+    # Firefox about:config
+    #  network.dns.upgrade_with_https_rr	false
+    #  network.dns.use_https_rr_as_altsvc	false
+    infra-host-ttl: 60
+
+    # 応答に時間がかかるサーバーを早めに見切りをつけ、別の権威DNSへ切り替える（ミリ秒）
+    # 初期値の1000msから短縮してタイムアウトを予防
+    target-fetch-policy: "2 1 0 0 0"
+
+    # 応答の高速化と最小限のレスポンス返却（余計な追加セクション処理で落ちるのを防ぐ）
     minimal-responses: yes
 
 remote-control:
